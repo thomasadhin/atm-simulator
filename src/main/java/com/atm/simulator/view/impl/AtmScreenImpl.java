@@ -9,8 +9,6 @@ import com.atm.simulator.utils.InputUtil;
 import com.atm.simulator.utils.Utils;
 import com.atm.simulator.view.AtmScreen;
 
-import java.util.Scanner;
-
 public class AtmScreenImpl implements AtmScreen {
 
     private AtmService atmService;
@@ -74,16 +72,13 @@ public class AtmScreenImpl implements AtmScreen {
 
     @Override
     public void checkBalance() {
-        Scanner scanner = new Scanner(System.in);
         System.out.println(atmService.checkBalance());
-        System.out.print("Press Enter to back");
-        scanner.nextLine();
+        InputUtil.input("Press Enter to back");
         mainScreen();
     }
 
     @Override
     public void withdrawScreen() {
-        Scanner scanner = new Scanner(System.in);
         int opt = 0;
 
         while (opt != 5) {
@@ -92,8 +87,8 @@ public class AtmScreenImpl implements AtmScreen {
             System.out.println("3. $100");
             System.out.println("4. Other");
             System.out.println("5. Back");
-            System.out.print("Please choose option[5]: ");
-            opt = scanner.nextInt();
+            String input = InputUtil.input("Please choose option[5]: ");
+            opt = Utils.isNumber(input) ? Integer.parseInt(input) : 0;
 
             switch (opt){
                 case Constants.OPT_WITHDRAW_OPTION_10:
@@ -121,11 +116,9 @@ public class AtmScreenImpl implements AtmScreen {
 
     @Override
     public void withdrawOtherScreen() {
-        Scanner scanner = new Scanner(System.in);
-
         System.out.println("Other Withdraw");
-        System.out.print("Enter amount to withdraw: ");
-        double amount = scanner.nextDouble();
+        String input = InputUtil.input("Enter amount to withdraw: ");
+        double amount = Utils.isNumber(input) ? Double.parseDouble(input) : 0.0;
 
         withdrawSumaryScreen(atmService.withdrawOther(amount));
     }
@@ -142,11 +135,10 @@ public class AtmScreenImpl implements AtmScreen {
         System.out.println("1. Transaction");
         System.out.println("2. Exit");
 
-        Scanner scanner = new Scanner(System.in);
         int opt = 0;
         while (opt!=2){
-            System.out.print("Choose option[2]: ");
-            opt = scanner.nextInt();
+            String input = InputUtil.input("Choose option[2]: ");
+            opt = Utils.isNumber(input) ? Integer.parseInt(input) : 0;
 
             switch (opt) {
                 case 1:
