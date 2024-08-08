@@ -29,7 +29,7 @@ public class AtmServiceImpl implements AtmService {
 
     @Override
     public boolean validateBalance(double amount) {
-        return amount > currentAccount.getBalance();
+        return amount <= currentAccount.getBalance();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class AtmServiceImpl implements AtmService {
 
     @Override
     public TransferSumaryModel transferFund(double amount, String accDest, String reffNumber) {
-        if (currentAccount.getBalance() < amount){
+        if (!validateBalance(amount)){
             System.out.println("Insufficient balance $" + amount);
             return null;
         }
@@ -104,13 +104,13 @@ public class AtmServiceImpl implements AtmService {
         }
 
         double amount = Double.parseDouble(strAmount);
-        if (validateBalance(amount)){
-            System.out.println("\nInsufficient balance $" + amount);
+        if (amount>1000) {
+            System.out.println("\nMaximum amount to transfer is $1000\n");
             return null;
         }
 
-        if (amount>1000) {
-            System.out.println("\nMaximum amount to transfer is $1000\n");
+        if (!validateBalance(amount)){
+            System.out.println("\nInsufficient balance $" + amount);
             return null;
         }
 
