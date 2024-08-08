@@ -29,7 +29,7 @@ public class AtmServiceImpl implements AtmService {
 
     @Override
     public boolean validateBalance(double amount) {
-        return amount < currentAccount.getBalance();
+        return amount > currentAccount.getBalance();
     }
 
     @Override
@@ -70,6 +70,11 @@ public class AtmServiceImpl implements AtmService {
 
     @Override
     public TransferSumaryModel transferFund(double amount, String accDest, String reffNumber) {
+        if (currentAccount.getBalance() < amount){
+            System.out.println("Insufficient balance $" + amount);
+            return null;
+        }
+
         AccountEntity destAccount = accountService.getAccountModel(accDest);
         double currAccAmt = currentAccount.getBalance() - amount;
         double destAccAmt = destAccount.getBalance() + amount;
@@ -81,38 +86,48 @@ public class AtmServiceImpl implements AtmService {
     }
 
     @Override
-    public TransferSumaryModel inqTransfer(String strAmount, String accDest, String reffNumber) {
+    public TransferSumaryModel inqTransfer(String strAmount, String accDest, String refNumber) {
         if (!Utils.isNumber(accDest)){
-            System.out.println("Invalid account");
+            System.out.println("\nInvalid account");
             return null;
         }
 
         if (!Utils.isNumber(strAmount)){
-            System.out.println("Invalid amount");
+            System.out.println("\nInvalid amount");
             return null;
         }
 
         AccountEntity destAccount = accountService.getAccountModel(accDest);
         if (destAccount==null){
-            System.out.println("Invalid account");
+            System.out.println("\nInvalid account");
             return null;
         }
 
         double amount = Double.parseDouble(strAmount);
         if (validateBalance(amount)){
-            System.out.println("Insufficient balance $" + amount);
+            System.out.println("\nInsufficient balance $" + amount);
+            return null;
         }
 
         if (amount>1000) {
-            System.out.println("Maximum amount to transfer is $1000\n");
+            System.out.println("\nMaximum amount to transfer is $1000\n");
             return null;
         }
 
         if (amount < 1){
-            System.out.println("Minimum amount to transfer is $1\n");
+            System.out.println("\nMinimum amount to transfer is $1\n");
             return null;
         }
 
-        return new TransferSumaryModel(currentAccount,LocalDateTime.now(),accDest,reffNumber,amount);
+        if (!refNumber.isEmpty() && !Utils.isNumber(refNumber)){
+            System.out.println("Invalid Reference Number");
+            return null;
+        }
+
+        if (refNumber.isEmpty()){
+            refNumber = Utils.getRandomNumberString();
+        }
+
+        return new TransferSumaryModel(currentAccount,LocalDateTime.now(),accDest,refNumber,amount);
     }
 }
